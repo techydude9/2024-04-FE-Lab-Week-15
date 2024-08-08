@@ -4,6 +4,7 @@
   Subject:  React Week 15 - REST, Fetch, Functional Components, and Best Practices
   FE Lab Week 15
 */
+/* August 7, 2024 Bob Ruzga's Solutions for Lab15 */
 
 /* ----------------------------------------------------- */
 // Key Term List:
@@ -182,9 +183,91 @@
 
 /*-- ALL IMPORTS HERE -- */
 import './App.css'
+import {useState, useEffect} from 'react'
 
 function App() {
   /* -- YOUR CODE/CRUD OPERATIONS HERE --*/
+
+//p1
+const API_URL = 'https://66b3d01e7fba54a5b7ee41d6.mockapi.io/api/wk15Lab/users'
+
+ //p1s1
+const [users, setUsers] = useState([{
+  name: 'Bob Ruzga',
+  jobTitle: 'Chief Puba',
+  companyName: 'Nothing & Nothing LLC'
+}]);
+
+// Part 3 step 2
+const [newUserName, setNewUserName] = useState('')
+const [newUserJobTitle, setNewUserJobTitle] = useState('')
+const [newUserCompanyName, setnewUserCompanyName] = useState('')
+
+// Part 4 step 2
+const [updatedUserName, setUpdatedUserName] = useState('')
+const [updatedUserJobTitle, setUpdatedUserJobTitle] = useState('')
+const [updatedUserCompanyName, setUpdatedUserCompanyName] = useState('')
+
+
+/* getUsers function  Part 1 steps 2-3*/
+function getUsers() {
+ 
+//p1s2
+  fetch(API_URL)
+    .then(data => data.json())
+    .then(data => setUsers(data))
+
+    return(
+      // CONTINUE LAB 15 FROM HERE Using PART 5
+    )
+}
+
+//p1s3
+  useEffect(() => {
+    getUsers()
+    console.log(users)}, []) 
+
+
+/* deleteUser function  Part 2 steps 1-3*/
+function deleteUser(id){
+  fetch(`${API_URL}/${id}`, {
+    method: 'DELETE'})
+    .then(() => getUsers())
+}
+
+/* postNewUser function Part 3 */
+function postNewUser(){
+  
+  fetch(API_URL, {
+    method: 'POST',
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({
+        name: newUserName,
+        jobTitle: newUserJobTitle,
+        companyName: newUserCompanyName,
+      })
+  })
+  .then(() => getUsers())
+}
+
+/* updateUser function  Part 4*/
+function updateUser({userObject}){
+  
+  let updatedUserObject = {
+    ...userObject, 
+    name: updatedUserName,
+    jobTitle: updatedUserJobTitle,
+    companyName: updatedUserCompanyName,
+  }
+
+  fetch(`${API_URL}/${userObject.id}`, {
+    method: 'PUT',
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(updatedUserObject)
+  })
+  .then(() => getUsers())
+}
+
 
   return (
     <div className="App">
