@@ -184,6 +184,7 @@
 /*-- ALL IMPORTS HERE -- */
 import './App.css'
 import {useState, useEffect} from 'react'
+import '../node_modules/bootstrap/dist/css/bootstrap.css'
 
 function App() {
   /* -- YOUR CODE/CRUD OPERATIONS HERE --*/
@@ -217,9 +218,7 @@ function getUsers() {
     .then(data => data.json())
     .then(data => setUsers(data))
 
-    return(
-      // CONTINUE LAB 15 FROM HERE Using PART 5
-    )
+    console.log(users);
 }
 
 //p1s3
@@ -236,8 +235,11 @@ function deleteUser(id){
 }
 
 /* postNewUser function Part 3 */
-function postNewUser(){
-  
+function postNewUser(e){
+  e.preventDefault()
+
+ // console.log(newUserName, newUserJobTitle, newUserCompanyName)
+
   fetch(API_URL, {
     method: 'POST',
     headers: {"Content-Type": "application/json"},
@@ -247,12 +249,13 @@ function postNewUser(){
         companyName: newUserCompanyName,
       })
   })
-  .then(() => getUsers())
+    .then(() => getUsers())
 }
 
 /* updateUser function  Part 4*/
-function updateUser({userObject}){
-  
+function updateUser(e, userObject){
+  e.preventDefault()
+
   let updatedUserObject = {
     ...userObject, 
     name: updatedUserName,
@@ -272,8 +275,75 @@ function updateUser({userObject}){
   return (
     <div className="App">
       {/* CODE BELOW: PART: 5.3 Connecting our POST */}
+    <div className="container">
+      <div className="card">
+        <h3>Enter new Employee Info</h3>
+        <form className="card-body bg-secondary">
+          <div className="form-group">
+            <label htmlFor="inNewname">User Name:</label>
+            <input className="form-control" type="text" placeholder='Full Name' 
+              onChange={(e) => setNewUserName(e.target.value)}></input>
+            <label htmlFor="inNewJobTitle">Job Title:</label>
+            <input className="form-control" type="text" placeholder='Job title'
+              onChange={(e) => setNewUserJobTitle(e.target.value)}></input>
+            <label htmlFor="inNewCompanyName">Company:</label>
+            <input className="form-control" type="text" placeholder='Company'
+              onChange={(e) => setnewUserCompanyName(e.target.value)}></input>
+          </div>
+          <div>
+            <button className="btn btn-info mt-2" onClick={(e) => postNewUser(e)}>Add Employee</button>
+          </div> 
+
+        </form>
+      </div>
+    </div>
 
       {/* CODE BELOW: PART 5.1: Connecting our GET  //  PART 5.4: Connecting our UPDATE */}
+      {/* Part 5.1 code */}
+      <div id="mapdiv" className="container-fluid mt-3 table-responsive">
+        <table className="table table-bordered table-hover">
+          <thead>
+            <tr className="col">
+              <th>Full Name</th>
+              <th>Job Title</th>
+              <th>Company</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user, index)=> {
+                return ( 
+                <>
+                <tr key={index} className="mb-0">
+                  <td>{user.name}</td>
+                  <td>{user.jobTitle}</td>
+                  <td>{user.companyName}</td>
+                  <td>
+                   <button className="btn btn-warning" onClick={() => deleteUser(user.id)}>
+                   🗑
+                   </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <input placeholder='Update Name' onChange={(e) => setUpdatedUserName(e.target.value)}></input>
+                  </td>
+                  <td>
+                    <input placeholder='Update Job Title' onChange={(e) =>setUpdatedUserJobTitle(e.target.value)}></input>
+                  </td>
+                  <td>  
+                    <input placeholder='Update Company' onChange={(e) => setUpdatedUserCompanyName(e.target.value)}></input>
+                  </td>
+                  <td>
+                    <button className="btn btn-primary btn-sm mb-3" onClick={(e) => updateUser(e, user)}>Update</button>
+                  </td>
+                </tr>
+               </>
+                 )
+              })} 
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }
